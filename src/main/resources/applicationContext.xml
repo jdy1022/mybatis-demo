@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       https://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+    <!-- 引入数据库的配置文件 -->
+    <context:property-placeholder location="classpath:properties/jdbc.properties"/>
+
+    <!--数据源-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="user" value="${db.username}"/>
+        <property name="password" value="${db.password}"/>
+        <property name="jdbcUrl" value="${db.jdbcUrl}"/>
+        <property name="driverClass" value="${db.driverClass}"/>
+    </bean>
+
+    <!-- spring事务管理 -->
+    <bean id="dataSourceTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+    <!-- 开启基于注解的事务 -->
+    <tx:annotation-driven transaction-manager="dataSourceTransactionManager" proxy-target-class="true"/>
+
+
+    <!-- 让spring管理sqlsessionfactory 使用mybatis和spring整合包中的 -->
+    <!--创建出SqlSessionFactory对象  -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 数据库连接池 -->
+        <property name="dataSource" ref="dataSource" />
+        <!-- configLocation指定全局配置文件的位置 -->
+        <property name="configLocation" value="classpath:mybatis-config/mybatis-config_01.xml" />
+        <!--mapperLocations: 指定mapper文件的位置-->
+       <!-- <property name="mapperLocations" value="classpath:sqlmap/*.xml"></property>-->
+    </bean>
+
+
+    <!-- 整合通用 Mapper 所需要做的配置修改： -->
+    <!-- 原始全类名：org.mybatis.spring.mapper.MapperScannerConfigurer -->
+    <!-- 通用 Mapper 使用：tk.mybatis.spring.mapper.MapperScannerConfigurer -->
+    <bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.jdy.mybatis2020.mapper"/>
+    </bean>
+
+</beans>

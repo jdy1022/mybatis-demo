@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <properties resource="properties/jdbc.properties"/>
+
+    <settings>
+        <!-- 打开延迟加载 的开关 -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!-- 将积极加载改为消极加载即按需要加载 -->
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>
+
+    <!--plugins：注册插件  -->
+    <plugins>
+        <plugin interceptor="com.jdy.mybatis2020.MyPlugin.FirstPlugin">
+            <property name="username" value="root"/>
+            <property name="password" value="root"/>
+        </plugin>
+        <plugin interceptor="com.jdy.mybatis2020.MyPlugin.FirstPlugin"></plugin>
+    </plugins>
+
+    <!-- &lt;!&ndash; 和spring整合后 environments配置将废除&ndash;&gt;
+     <environments default="development">
+         <environment id="development">
+             &lt;!&ndash; 使用jdbc事务管理&ndash;&gt;
+             <transactionManager type="JDBC"/>
+             &lt;!&ndash; 数据库连接池&ndash;&gt;
+             <dataSource type="POOLED">
+                 <property name="driver" value="com.mysql.jdbc.Driver"/>
+                 <property name="url" value="jdbc:mysql:///mybatisdb?useSSL=false&amp;serverTimezone=UTC"/>
+                 <property name="username" value="root"/>
+                 <property name="password" value="root"/>
+             </dataSource>
+         </environment>
+     </environments>-->
+
+    <!-- 和spring整合后 environments配置将废除-->
+    <environments default="development">
+        <environment id="development">
+            <!-- 使用jdbc事务管理-->
+            <transactionManager type="JDBC"/>
+            <!-- 数据库连接池-->
+            <dataSource type="POOLED">
+                <property name="driver" value="${db.driverClass}"/>
+                <property name="url" value="${db.jdbcUrl}"/>
+                <property name="username" value="${db.username}"/>
+                <property name="password" value="${db.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+
+    <mappers>
+        <mapper resource="sqlmap/user.xml"/>
+        <mapper resource="sqlmap/userMapper.xml"/>
+        <mapper resource="sqlmap/selectMapper.xml"/>
+        <mapper class="com.jdy.mybatis2020.dao.intf.UserQuery"/>
+    </mappers>
+
+</configuration>

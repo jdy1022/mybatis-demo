@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="user">
+
+    <!--user表字段-->
+    <sql id="sqlColumnsForUserTable">
+		id,username,sex,birthday,address
+	</sql>
+
+
+    <!--结果集-->
+    <resultMap type="com.jdy.mybatis2020.bean.User" id="userMap">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="sex" property="sex"/>
+        <result column="birthday" property="birthday"/>
+        <result column="address" property="address"/>
+    </resultMap>
+
+
+    <!--条件-->
+    <sql id="sqlConditions">
+        <if test="username != null and '' != username">
+            <![CDATA[ AND username = #{username} ]]>
+        </if>
+        <if test="sex != null and '' != sex">
+            <![CDATA[ AND sex  LIKE CONCAT('%','${sex}','%' ) ]]>
+        </if>
+        <if test="address != null and '' != address">
+            <![CDATA[ AND  address = #{address} ]]>
+        </if>
+        <if test="birthday != null and '' != birthday">
+            <![CDATA[ AND birthday > DATE_FORMAT(#{birthday},'%Y-%m-%d') ]]>
+        </if>
+    </sql>
+
+
+    <sql id="sqlOrder">
+		<![CDATA[ limit #{startRow},#{rowsPerPage}]]>
+	</sql>
+
+
+    <!-- 根据id获取用户信息 -->
+    <select id="findUserById"  resultType="com.jdy.mybatis2020.bean.User">
+        select
+        <include refid="sqlColumnsForUserTable"/>
+        from user where id = #{id};
+    </select>
+
+
+    <!-- 模糊查询查询用户 -->
+    <select id="findUserLikeUsername"  resultType="com.jdy.mybatis2020.bean.User">
+        select <include refid="sqlColumnsForUserTable"/>
+        from user where username like '%${value}%';
+    </select>
+
+
+    <!-- 添加用户 -->
+    <insert id="insertUser" parameterType="com.jdy.mybatis2020.bean.User">
+        <!-- selectKey将主键返回，需要再返回 -->
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            select LAST_INSERT_ID();
+        </selectKey>
+        insert into user(<include refid="sqlColumnsForUserTable"/>)
+        values(#{id},#{username},#{sex},#{birthday},#{address});
+    </insert>
+
+
+    <!-- 删除用户 -->
+    <delete id="deleteUserById" parameterType="int">
+		delete from user where id=#{id}
+	</delete>
+
+
+    <!-- 更新用户 -->
+    <update id="updateUser" parameterType="com.jdy.mybatis2020.bean.User">
+        update user
+        <set>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="address != null">
+                address = #{address},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+</mapper>

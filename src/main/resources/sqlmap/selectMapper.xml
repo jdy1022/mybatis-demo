@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jdy.mybatis2020.dao.intf.SelectMapperDao">
+    <!--级联查询-->
+    <resultMap id="userordermap" type="com.jdy.mybatis2020.bean.Orders">
+        <result property="number" column="number"/>
+        <association property="user" javaType="com.jdy.mybatis2020.bean.User">
+            <id property="id" column="user_id"/>
+            <result property="username" column="username"/>
+        </association>
+        <!--一对多查询-->
+        <collection property="orderDetails" ofType="com.jdy.mybatis2020.bean.OrderDetail">
+            <association property="items" javaType="com.jdy.mybatis2020.bean.Items">
+                <result property="name" column="name"/>
+                <result property="detail" column="detail"/>
+            </association>
+        </collection>
+    </resultMap>
+
+    <select id="findOrdersMap" resultMap="userordermap">
+        SELECT
+            USER .id,
+            USER .username,
+            orders.number,
+            items.name,
+            items.detail
+        FROM
+            orders,
+            USER,
+            orderdetail,
+            items
+        WHERE orders.user_id = USER .id
+            AND orders.id = orderdetail.orders_id
+            AND orderdetail.items_id = items.id
+            AND user.id = #{id}
+    </select>
+
+
+
+
+    <!-- 订单信息resultmap -->
+    <resultMap type="com.jdy.mybatis2020.bean.Orders" id="userordermap2">
+        <id property="id" column="id"/>
+        <result property="number" column="number"/>
+        <association fetchType="lazy" property="user" javaType="com.jdy.mybatis2020.bean.User" select="user.findUserById" column="user_id"/>
+    </resultMap>
+
+    <select id="findOrdersList3" resultMap="userordermap2">
+         SELECT  orders.*  FROM  orders where id = #{id};
+    </select>
+
+</mapper>

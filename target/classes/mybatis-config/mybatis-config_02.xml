@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--属性-->
+    <properties resource="jdbc.properties"/>
+    <!--全局配置参数-->
+    <settings>
+        <setting name="defaultScriptingLanguage" value=""/>
+    </settings>
+    <!--类型别名-->
+    <typeAliases>
+        <!-- 单个别名定义 -->
+        <typeAlias type="com.jdy.mybatis2020.bean.User" alias="user"/>
+        <!--批量别名定义，扫描整个包下的类，别名为类名（首字母大写或小写都可以）-->
+        <package name="com.jdy.mybatis2020.bean"/>
+        <!--<package name="其他包"/>-->
+    </typeAliases>
+    <!--类型处理器-->
+    <typeHandlers>
+        <typeHandler handler="org.apache.ibatis.type.InstantTypeHandler"/>
+        <typeHandler handler="org.apache.ibatis.type.ZonedDateTimeTypeHandler"/>
+        <typeHandler handler="org.apache.ibatis.type.YearTypeHandler"/>
+        <typeHandler handler="org.apache.ibatis.type.YearMonthTypeHandler"/>
+    </typeHandlers>
+    <!--对象工厂-->
+    <objectFactory type=""/>
+    <!--插件-->
+    <plugins>
+        <plugin interceptor=""></plugin>
+    </plugins>
+
+
+    <!-- 和spring整合后 environments配置将废除-->
+    <environments default="development">
+        <environment id="development">
+            <!-- 使用jdbc事务管理-->
+            <transactionManager type="JDBC"/>
+            <!-- 数据库连接池-->
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driverClass}"/>
+                <property name="url" value="${jdbc.jdbcUrl}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="sqlmap/user.xml"/>
+        <mapper resource="sqlmap/userMapper.xml"/>
+    </mappers>
+
+</configuration>

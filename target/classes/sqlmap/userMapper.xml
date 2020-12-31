@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jdy.mybatis2020.dao.intf.UserMapperDao">
+
+    <!--user表字段-->
+    <sql id="sqlColumnsForUserTable">
+		id,username,sex,birthday,address
+	</sql>
+
+    <!-- 根据id获取用户信息 -->
+    <select id="findUserById" resultType="com.jdy.mybatis2020.bean.User">
+        select
+        <include refid="sqlColumnsForUserTable"/>
+        from user where id = #{id};
+    </select>
+
+    <select id="findUserByQueryVo" parameterType="com.jdy.mybatis2020.bean.QueryVo"
+            resultType="com.jdy.mybatis2020.bean.User">
+    	 select * from user where id = #{user.id } and username =#{user.username}
+	</select>
+
+    <select id="findUserByMap" parameterType="java.util.Map" resultType="com.jdy.mybatis2020.bean.User">
+    	 select * from user where id = #{id }
+	</select>
+
+
+    <select id="selectUserByList" parameterType="java.util.List" resultType="com.jdy.mybatis2020.bean.User">
+        select * from user
+        <where>
+            <!-- 传递List，List中是pojo -->
+            <if test="list!=null">
+                <foreach collection="list" item="item" open="id in(" separator="," close=")">
+                    #{item.id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="findOrdersList" resultType="com.jdy.mybatis2020.bean.OrdersCustom">
+        SELECT orders.*, user.username,user.address FROM orders,USER WHERE orders.user_id = user.id and user.id =#{id} ;
+    </select>
+</mapper>
